@@ -24,6 +24,8 @@ for(let emFoco of camposUf) {
 // }
 
 function validaCampo(elemento) {
+    
+    document.getElementById("camposObrigatorios").disabled = true;
 
     elemento.addEventListener('focusout', function(event){
 
