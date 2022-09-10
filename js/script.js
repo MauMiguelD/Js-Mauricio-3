@@ -1,109 +1,63 @@
-let camposObrigatorios = document.querySelectorAll('input.obrigatorio');
-let camposNumericos = document.querySelectorAll('input.numero');
-let camposEmail = document.querySelectorAll('input.email');
-let camposUf = document.querySelectorAll('input.uf');
+function calcularMedia(notas) {
+    let soma = 0;
+    for (c = 0; c < notas.length; c++){
+        soma += notas[c];
+    }
 
-for(let emFoco of camposObrigatorios) {
-    validaCampo(emFoco);
+
+media = soma / notas.length
+
+return media;
+} 
+
+let media; 
+
+function aprovacao(notas) {
+    let media = calcularMedia(notas);
+
+    let condicao = media >= 8 ? 'aprovado' : 'reprovado';
+
+    return 'Media: ' + media + 'resultado: ' + condicao;
 }
 
-for(let emFoco of camposNumericos) {
-    validaCampo(emFoco);
-}
+function contagemRegressiva(numero) {
 
-for(let emFoco of camposEmail) {
-    validaCampo(emFoco);
-}
+    console.log(numero);
 
-for(let emFoco of camposUf) {
-    validaCampo(emFoco);
-}
+    let proximoNumero = numero -1
 
-// if( this.getAttribute('class').match(/erro/)) {
-//     return false;
-// }
-
-function validaCampo(elemento) {
+    if (numero > 0)
+        contagemRegressiva(proximoNumero); // 9 
     
-    document.getElementById("camposObrigatorios").disabled = true;
-
-    elemento.addEventListener('focusout', function(event){
-
-        event.preventDefault();
-
-        if(this.value == ''){
-            document.querySelector('.mensagem').innerHTML = 'Verifique o preenchimento dos campos em destaque'
-            this.classList.add('erro');
-            this.parentNode.classList.add('erro');
-            return false;
-        } else {
-            document.querySelector('mensagem').innerHTML = '';
-            this.classList.remove('erro');
-            this.parentNode.classList.remove('erro');
-        }
-    });
 }
 
-function validaCampoNumerico(elemento) {
+// contagemRegressiva(50);
 
-    elemento.addEventListener('focusout', function(event){
+document.addEventListener('submit', function(evento){
 
-        event.preventDefault();
-
-        let numero = this.value.match(/^[\d]5-[\d]3/) ? this.value.replace(/-/, ''): this.value;
-
-        if(numero != '' && numero.match(/[0-9]*/) && numero >= 0 && numero <= 10){
-            document.querySelector('.mensagem').innerHTML = 'Verifique o preenchimento dos campos em destaque'
-            this.classList.add('erro');
-            this.parentNode.classList.add('erro');
-            return false;
-        } else {
-            document.querySelector('.mensagem').innerHTML = '';
-            this.classList.remove('erro');
-            this.parentNode.classList.remove('erro');
-        }
-    });
-}
-
-function validaEmail(elemento){
-
-    elemento.addEventListener('focusout', function(event){
-
-        event.preventDefault();
-
-        const emailValido = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+\.[a-z]?$/i;
-        if(this.value.match(emailValido)){
-            document.querySelector('.mensagem').innerHTML = '';
-            this.classList.remove('erro');
-            this.parentNode.classList.remove('erro');
-        } else {
-            document.querySelector('.mensagem').innerHTML = 'Verefique o preenchimento dos campos em destaque'
-            this.classList.add('erro');
-            this.parentNode.classList.add('erro');
-            return false;
-        }
+    evento.preventDefault();
+    evento.stopPropagation();
 
 
+    let formulario = document.getElementById ('formulario-01');
 
-    });   
-}
+    let dados = new FormData(formulario);
 
-function validaUf(elemento){
+    let objeto = {};
 
-    elemento.addEventListener('focusout', function(event){
+    let notas = [];
 
-        event.preventDefault();
-        
-        const ufValida = /[^a-zA-Z]/g;
-        if(this.value.match(ufValida)){
-            document.querySelector('.mensagem').innerHTML = '';
-            this.classList.remove('erro');
-            this.parentNode.classList.remove('erro');
-        } else {
-            document.querySelector('.mensagem').innerHTML = 'Verefique o preenchimento dos campos em destaque'
-            this.classList.add('erro');
-            this.parentNode.classList.add('erro');
-            return false;
-        }
-    });
-}
+    for(let key of dados.keys()) {
+        objeto[key] = dados.get(key);
+
+        notas.push(parseInt(dados.get(key)));
+    }
+
+    console.log(notas);
+
+    console.log(objeto);
+
+    document.getElementById('resultado').innerHTML = aprovacao(notas);
+
+});
+
