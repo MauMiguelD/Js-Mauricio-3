@@ -17,7 +17,7 @@ function aprovacao(notas) {
 
     let condicao = media >= 8 ? 'aprovado' : 'reprovado';
 
-    return 'Media: ' + media + 'resultado: ' + condicao;
+    return 'Media: ' + media + ' - Resultado: ' + condicao;
 }
 
 function contagemRegressiva(numero) {
@@ -33,24 +33,34 @@ function contagemRegressiva(numero) {
 
 // contagemRegressiva(50);
 
-document.addEventListener('submit', function(evento){
+/*
+ * Formulário de envio de dados para cálculo da média
+ */
+
+document.getElementById('formulario-01').addEventListener('submit', function(evento){
 
     evento.preventDefault();
     evento.stopPropagation();
 
+    if(this.getAttribute('class').match(/erro/) ){
+        return false;
+    }
 
-    let formulario = document.getElementById ('formulario-01');
-
-    let dados = new FormData(formulario);
+    let dados = new FormData(this);
 
     let objeto = {};
 
     let notas = [];
 
     for(let key of dados.keys()) {
-        objeto[key] = dados.get(key);
+        
+        // mesmo que passe uma letra para o formulario ele é transformado em 0
+        let numero = dados.get(key).match(/\d*/) ? Number(dados.get(key)) : 0; 
 
-        notas.push(parseInt(dados.get(key)));
+        if(!isNaN(numero)){
+            notas.push(numero);
+        }
+    
     }
 
     console.log(notas);
@@ -61,3 +71,55 @@ document.addEventListener('submit', function(evento){
 
 });
 
+
+function validaCampo(elemento){
+
+    elemento.addEventListener('focusout', function(event){
+
+        event.preventDefault()
+
+        if(this.value == ""){
+        document.querySelector('.mensagem').innerHTML = "Verefique o preenchimento dos campos em vermelho"
+        this.classList.add('erro'); // adicionando borda ao erro
+        this.parentNode.classList.add('erro');
+        return false;
+        } else {
+        document.querySelector('.mensagem').innerHTML = ""
+        this.classList.remove('erro'); // retirando borda 
+        this.parentNode.classList.remove('erro');
+        }
+
+    });
+}
+
+function validaCampoNumerico(elemento){
+
+    elemento.addEventListener('focusout', function(event){
+
+        event.preventDefault()
+
+        if(this.value != "" && this.value.match(/[0-9]*/) && this.value >= 0 && this.value <= 10){
+            document.querySelector('.mensagem').innerHTML = ""
+            this.classList.remove('erro'); // retirando borda 
+            this.parentNode.classList.remove('erro');
+        } else {
+            document.querySelector('.mensagem').innerHTML = "Verefique o preenchimento dos campos em vermelho"
+            this.classList.add('erro'); // adicionando borda ao erro
+            this.parentNode.classList.add('erro');
+            return false;
+        }
+
+    });
+}
+
+
+let camposObrigatorios = document.querySelectorAll('input.obrigatorio'); // só vai verificar os campos com a class obrigatorio
+let camposNumericos = document.querySelectorAll('input.numero'); // irá verificar os campos com a class numero
+
+
+for(let emFoco of camposObrigatorios){
+    validaCampo(emFoco)
+}
+for(let emFoco of camposNumericos){
+    validaCampoNumerico(emFoco)
+}
