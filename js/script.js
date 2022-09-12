@@ -1,4 +1,4 @@
-function calcularMedia(notas) {
+/* function calcularMedia(notas) {
     let soma = 0;
     for (c = 0; c < notas.length; c++){
         soma += notas[c];
@@ -31,13 +31,18 @@ function contagemRegressiva(numero) {
     
 }
 
+*/
+
 // contagemRegressiva(50);
 
 /*
  * Formulário de envio de dados para cálculo da média
  */
 
-document.getElementById('formulario-01').addEventListener('submit', function(evento){
+const formulario1 = document.getElementById('formulario-01')
+
+if (formulario1) // se o formulario 1 existir ele será executado, caso contrário não!
+formulario1.addEventListener('submit', function(evento){
 
     evento.preventDefault();
     evento.stopPropagation();
@@ -79,7 +84,7 @@ function validaCampo(elemento){
         event.preventDefault()
 
         if(this.value == ""){
-        document.querySelector('.mensagem').innerHTML = "Verefique o preenchimento dos campos em vermelho"
+        document.querySelector('.mensagem').innerHTML = "Verifique o preenchimento dos campos em destaque"
         this.classList.add('erro'); // adicionando borda ao erro
         this.parentNode.classList.add('erro');
         return false;
@@ -98,12 +103,14 @@ function validaCampoNumerico(elemento){
 
         event.preventDefault()
 
-        if(this.value != "" && this.value.match(/[0-9]*/) && this.value >= 0 && this.value <= 10){
+        let numero = this.value.match(/^[\d]5-[\d]3/) ? this.value.replace(/-/,"") : this.value;
+
+        if(numero != "" && numero.match(/[0-9]*/) && numero >= 0 && numero <= 10){
             document.querySelector('.mensagem').innerHTML = ""
             this.classList.remove('erro'); // retirando borda 
             this.parentNode.classList.remove('erro');
         } else {
-            document.querySelector('.mensagem').innerHTML = "Verefique o preenchimento dos campos em vermelho"
+            document.querySelector('.mensagem').innerHTML = "Verifique o preenchimento dos campos em destaque"
             this.classList.add('erro'); // adicionando borda ao erro
             this.parentNode.classList.add('erro');
             return false;
@@ -112,14 +119,38 @@ function validaCampoNumerico(elemento){
     });
 }
 
+function validaEmail (elemento){
+
+    elemento.addEventListener('focusout', function(event){
+
+        event.preventDefault()
+
+        const emailValido = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]/i; // (i) é para ignorar a formatação sendo maius ou mins
+
+        if(this.value.match(emailValido)){
+            document.querySelector('.mensagem').innerHTML = "";
+            this.classList.remove('erro');
+            this.parentNode.classList.remove('erro');
+        } else {
+            document.querySelector('.mensagem').innerHTML = "Verifique o preenchimento dos campos em destaque";
+            this.classList.add('erro');
+            this.parentNode.classList.add('erro');
+            return false;
+        }
+    });
+}
+
 
 let camposObrigatorios = document.querySelectorAll('input.obrigatorio'); // só vai verificar os campos com a class obrigatorio
 let camposNumericos = document.querySelectorAll('input.numero'); // irá verificar os campos com a class numero
-
+let camposEmail = document.querySelectorAll('input.email'); // irá verificar os campos de Email
 
 for(let emFoco of camposObrigatorios){
     validaCampo(emFoco)
 }
 for(let emFoco of camposNumericos){
     validaCampoNumerico(emFoco)
+}
+for(let emFoco of camposEmail){
+    validaEmail(emFoco)
 }
